@@ -85,11 +85,18 @@ fn test_all_main_parses() {
 
 #[test]
 fn regression() -> anyhow::Result<()> {
-// left: `"#R*E"`,
-// right: `"#*E"`', src/test.rs:79:26
-
     let stroke = Key::ControlNum | Key::LeftR | Key::MiddleStar | Key::MiddleE;
     assert_eq!(&stroke.to_string(), "#R*E");
 
     Ok(())
+}
+
+#[test]
+fn plover_dict_parse() {
+    use plover_dict::Part;
+    assert_eq!(Part::parse("Hello"), Part::Text("Hello".to_string()));
+    assert_eq!(Part::parse("{^}"), Part::Attach);
+    assert_eq!(Part::parse("{&a}"), Part::Glue("a".to_string()));
+    assert_eq!(Part::parse("{^ab}"), Part::Suffix("ab".to_string()));
+    assert_eq!(Part::parse("{cd^}"), Part::Prefix("cd".to_string()));
 }

@@ -3,6 +3,8 @@ use anyhow::anyhow;
 #[cfg(test)]
 mod test;
 
+pub mod plover_dict;
+
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub struct Stroke(u32);
 
