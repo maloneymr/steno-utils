@@ -100,6 +100,12 @@ impl From<Key> for Stroke {
     }
 }
 
+impl From<Stroke> for Outline {
+    fn from(stroke: Stroke) -> Outline {
+        Outline(vec![stroke])
+    }
+}
+
 impl Stroke {
     pub fn contains(&self, key: Key) -> bool {
         self.0 & key as u32 != 0
@@ -156,6 +162,15 @@ impl Stroke {
             return Err(anyhow!("empty"));
         }
         Ok(result)
+    }
+
+    pub fn from_keys(keys: &[Key]) -> Stroke {
+        assert!(keys.len() > 0, "Must have at least one key");
+        let mut stroke = Stroke::from(keys[0]);
+        for key in &keys[1..] {
+            stroke |= *key;
+        }
+        stroke
     }
 
     fn consume_control(stroke: &str) -> anyhow::Result<(Option<Key>, &str)> {

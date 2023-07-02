@@ -7,3 +7,4 @@ pub mod machine;
 pub mod outline;
 
 pub use outline::{Key, Stroke, Outline};
+pub use dictionary::Dictionary;
