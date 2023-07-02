@@ -52,33 +52,3 @@ impl Token {
         Token::Word(word.to_string())
     }
 }
-
-
-lazy_static! {
-    static ref MAIN: Value = {
-        let main_json_string = std::fs::read_to_string("main.json").unwrap();
-        serde_json::from_str(&main_json_string).unwrap()
-    };
-}
-
-pub struct Machine {
-    history: Vec<Token>,
-}
-
-impl Machine {
-    pub fn new() -> Machine {
-        Machine {
-            history: vec![],
-        }
-    }
-
-    pub fn input(&mut self, token: Token) {
-        self.history.push(token);
-    }
-
-    pub fn commit(&mut self) -> String {
-        self.history = vec![];
-        "".to_string()
-    }
-}
-
