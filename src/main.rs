@@ -1,5 +1,5 @@
 use steno_utils;
-use steno_utils::plover_dict::Part;
+use steno_utils::plover_dict::Token;
 
 use lazy_static::lazy_static;
 use serde_json::Value;
@@ -13,7 +13,7 @@ lazy_static! {
 
 fn main() {
     for (_outline, word) in MAIN.as_object().unwrap() {
-        let part = Part::parse(word.as_str().unwrap());
+        let part = Token::parse(word.as_str().unwrap());
         println!("{:<30}{part:?}", word.as_str().unwrap());
     }
 }

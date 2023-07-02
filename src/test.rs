@@ -93,10 +93,32 @@ fn regression() -> anyhow::Result<()> {
 
 #[test]
 fn plover_dict_parse() {
-    use plover_dict::Part;
-    assert_eq!(Part::parse("Hello"), Part::Text("Hello".to_string()));
-    assert_eq!(Part::parse("{^}"), Part::Attach);
-    assert_eq!(Part::parse("{&a}"), Part::Glue("a".to_string()));
-    assert_eq!(Part::parse("{^ab}"), Part::Suffix("ab".to_string()));
-    assert_eq!(Part::parse("{cd^}"), Part::Prefix("cd".to_string()));
+    use plover_dict::Token;
+    assert_eq!(Token::parse("Hello"), Token::Word("Hello".to_string()));
+    assert_eq!(Token::parse("{^}"), Token::Attach);
+    assert_eq!(Token::parse("{&a}"), Token::Glue("a".to_string()));
+    assert_eq!(Token::parse("{^ab}"), Token::Suffix("ab".to_string()));
+    assert_eq!(Token::parse("{cd^}"), Token::Prefix("cd".to_string()));
+}
+
+#[test]
+fn test_dictionary() -> anyhow::Result<()> {
+    use super::dictionary::Dictionary;
+    use super::plover_dict::Token;
+
+    let dictionary = Dictionary::new();
+
+    let outline = Outline::parse("AFT")?;
+    assert_eq!(dictionary.lookup(outline), Some(Token::Word("after".to_string())));
+
+    let outline = Outline::parse("HE")?;
+    assert_eq!(dictionary.lookup(outline), Some(Token::Word("he".to_string())));
+
+    let outline = Outline::parse("WHA")?;
+    assert_eq!(dictionary.lookup(outline), Some(Token::Word("what".to_string())));
+
+    let outline = Outline::parse("TKE/SREL/OP")?;
+    assert_eq!(dictionary.lookup(outline), Some(Token::Word("develop".to_string())));
+
+    Ok(())
 }

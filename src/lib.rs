@@ -4,6 +4,64 @@ use anyhow::anyhow;
 mod test;
 
 pub mod plover_dict;
+pub mod dictionary;
+
+#[derive(Clone, Eq, PartialEq)]
+pub struct Outline(Vec<Stroke>);
+
+impl std::fmt::Debug for Outline {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        for (i, stroke) in self.0.iter().enumerate() {
+            if i > 0 {
+                write!(f, "/")?;
+            }
+            write!(f, "{stroke}")?;
+        }
+        Ok(())
+    }
+}
+
+impl std::fmt::Display for Outline {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        for (i, stroke) in self.0.iter().enumerate() {
+            if i > 0 {
+                write!(f, "/")?;
+            }
+            write!(f, "{stroke}")?;
+        }
+        Ok(())
+    }
+}
+
+impl std::ops::Div<Stroke> for Stroke {
+    type Output = Outline;
+
+    fn div(self, stroke: Stroke) -> Outline {
+        Outline(vec![self, stroke])
+    }
+}
+
+impl std::ops::Div<Stroke> for Outline {
+    type Output = Outline;
+
+    fn div(self, stroke: Stroke) -> Outline {
+        let Outline(mut strokes) = self;
+        strokes.push(stroke);
+        Outline(strokes)
+    }
+}
+
+impl Outline {
+    pub fn parse(outline: &str) -> anyhow::Result<Outline> {
+        let mut strokes = vec![];
+        for stroke_str in outline.split('/') {
+            let stroke = Stroke::parse(stroke_str)?;
+            strokes.push(stroke);
+        }
+
+        Ok(Outline(strokes))
+    }
+}
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub struct Stroke(u32);
